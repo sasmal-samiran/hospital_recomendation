@@ -15,3 +15,4 @@ print("Number of objects created: ", Car.count, "KO")
 
 print("Number of objects created: ", Car.count, "BYE")
 print("Number of objects created: ", Car.count, "BYE1")
+print("Number of objects created: ", Car.count, "BYE3")
