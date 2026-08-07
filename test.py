@@ -9,4 +9,4 @@ s3= Car()
 s4=Car()
 s5=Car()
 
-print("Number of objects created: ", Car.count, "OL")
+print("Number of objects created: ", Car.count)
