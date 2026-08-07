@@ -12,3 +12,5 @@ s5=Car()
 print("Number of objects created: ", Car.count, "OK")
 
 print("Number of objects created: ", Car.count, "KO")
+
+print("Number of objects created: ", Car.count, "BYE")
