@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PulseRoute AI | Weather & Traffic-Aware Hospital Recommendation System</title>
+  
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Leaflet.js Interactive Maps -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  
+  <!-- PulseRoute Design System -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- App Header & Navigation -->
+  <header class="app-navbar">
+    <div class="container nav-container">
+      <a href="#landing" class="brand-logo">
+        <div class="brand-icon">
+          <i class="fa-solid fa-heart-pulse"></i>
+        </div>
+        <span>PulseRoute <strong>AI</strong></span>
+      </a>
+
+      <!-- Navigation Links -->
+      <ul class="nav-links" id="nav-menu">
+        <li><a href="#landing" class="nav-link"><i class="fa-solid fa-house"></i> Home</a></li>
+        <li><a href="#emergency" class="nav-link"><i class="fa-solid fa-truck-medical"></i> Emergency Finder</a></li>
+        
+        <!-- Authenticated User Links -->
+        <li class="auth-only" style="display: none;"><a href="#dashboard" class="nav-link"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
+        <li class="auth-only" style="display: none;"><a href="#history" class="nav-link"><i class="fa-solid fa-clock-rotate-left"></i> History</a></li>
+        <li class="auth-only" style="display: none;"><a href="#profile" class="nav-link"><i class="fa-solid fa-id-card-clip"></i> Profile</a></li>
+        
+        <!-- Admin-Only Links -->
+        <li class="admin-only" style="display: none;"><a href="#admin" class="nav-link"><i class="fa-solid fa-shield-halved"></i> Admin Console</a></li>
+      </ul>
+
+      <!-- Right Profile & Auth Buttons -->
+      <div class="nav-right">
+        <!-- Guest State -->
+        <div class="guest-only">
+          <a href="#login" class="btn btn-secondary btn-sm"><i class="fa-solid fa-right-to-bracket"></i> Sign In</a>
+          <a href="#register" class="btn btn-primary btn-sm"><i class="fa-solid fa-user-plus"></i> Sign Up</a>
+        </div>
+
+        <!-- Authenticated State -->
+        <div class="auth-only" style="display: none; align-items: center; gap: 0.75rem;">
+          <div class="user-profile-badge">
+            <span id="nav-user-role" class="role-badge user">USER</span>
+            <span id="nav-user-name">User</span>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="window.Auth.logout()" title="Sign Out">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          </button>
+        </div>
+
+        <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle Navigation">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Dynamic View Container -->
+  <main class="main-content container">
+
+    <!-- ==================== 1. LANDING / HOME VIEW ==================== -->
+    <section id="view-landing" class="app-view active">
+      <div class="hero-section">
+        <span class="badge-emerald"><i class="fa-solid fa-bolt"></i> AI-POWERED EMERGENCY ROUTING</span>
+        <h1 class="hero-title">
+          Fastest Hospital Routes Based on <span>Traffic, Weather & Road AI</span>
+        </h1>
+        <p class="hero-subtitle">
+          PulseRoute AI evaluates real-time traffic congestion, live weather safety hazards, and vision-based road surface quality to direct ambulances and patients to the optimal hospital without dangerous delays.
+        </p>
+
+        <div class="hero-buttons">
+          <a href="#emergency" class="btn btn-primary btn-lg">
+            <i class="fa-solid fa-truck-medical"></i> Find Emergency Hospital Now
+          </a>
+          <a href="#login" class="btn btn-secondary btn-lg guest-only">
+            <i class="fa-solid fa-right-to-bracket"></i> Sign In to Save Routes
+          </a>
+          <a href="#dashboard" class="btn btn-secondary btn-lg auth-only" style="display: none;">
+            <i class="fa-solid fa-chart-pie"></i> Open My Dashboard
+          </a>
+        </div>
+
+        <div class="feature-grid">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="fa-solid fa-car-burst"></i></div>
+            <h3>Traffic Aware Duration</h3>
+            <p>Calculates dynamic congestion ratios using Google Routes to avoid gridlocked corridors during critical emergencies.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon"><i class="fa-solid fa-cloud-bolt"></i></div>
+            <h3>Live Weather Hazards</h3>
+            <p>Monitors downpours, visibility, and wind speeds along travel waypoints via OpenWeatherMap to safeguard the journey.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon"><i class="fa-solid fa-camera-viewfinder"></i></div>
+            <h3>Vision AI Road Scoring</h3>
+            <p>Zero-shot CLIP classification grades potholes, standing water, and road damage from 0 to 100.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon"><i class="fa-solid fa-ranking-star"></i></div>
+            <h3>Smart Multi-Factor Ranking</h3>
+            <p>Synthesizes arrival ETA, traffic delay, surface safety, and weather into a single ranked recommendation.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 2. LOGIN VIEW ==================== -->
+    <section id="view-login" class="app-view">
+      <div class="auth-container">
+        <div class="auth-card">
+          <div class="auth-header">
+            <span class="badge-emerald"><i class="fa-solid fa-shield"></i> SECURE SIGN IN</span>
+            <h2>Welcome Back</h2>
+            <p>Sign in to access your saved routes, medical profile, and recommendation history.</p>
+          </div>
+
+          <form id="login-form">
+            <div class="form-group">
+              <label for="login-email">Email Address</label>
+              <input type="email" id="login-email" class="form-control" placeholder="user@emergency.com" required value="user@emergency.com">
+            </div>
+
+            <div class="form-group">
+              <label for="login-password">Password</label>
+              <input type="password" id="login-password" class="form-control" placeholder="••••••••" required value="User@123">
+            </div>
+
+            <button type="submit" id="btn-login-submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
+              <i class="fa-solid fa-right-to-bracket"></i> Sign In
+            </button>
+          </form>
+
+          <div class="auth-footer">
+            <p>Demo Accounts: <code>user@emergency.com</code> (User) &bull; <code>admin@emergency.com</code> (Admin)</p>
+            <p style="margin-top: 0.5rem;">Don't have an account? <a href="#register">Create Account</a></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 3. REGISTER VIEW ==================== -->
+    <section id="view-register" class="app-view">
+      <div class="auth-container">
+        <div class="auth-card">
+          <div class="auth-header">
+            <span class="badge-emerald"><i class="fa-solid fa-user-plus"></i> NEW ACCOUNT</span>
+            <h2>Register Profile</h2>
+            <p>Set up your profile and emergency contact details.</p>
+          </div>
+
+          <form id="register-form">
+            <div class="form-group">
+              <label for="reg-name">Full Name *</label>
+              <input type="text" id="reg-name" class="form-control" placeholder="Jane Doe" required>
+            </div>
+
+            <div class="form-group">
+              <label for="reg-email">Email Address *</label>
+              <input type="email" id="reg-email" class="form-control" placeholder="jane@example.com" required>
+            </div>
+
+            <div class="form-group">
+              <label for="reg-password">Password *</label>
+              <input type="password" id="reg-password" class="form-control" placeholder="Min 6 characters" minlength="6" required>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="reg-blood">Blood Group</label>
+                <select id="reg-blood" class="form-control">
+                  <option value="">Select...</option>
+                  <option value="A+">A+</option>
+                  <option value="A-">A-</option>
+                  <option value="B+">B+</option>
+                  <option value="B-">B-</option>
+                  <option value="AB+">AB+</option>
+                  <option value="AB-">AB-</option>
+                  <option value="O+">O+</option>
+                  <option value="O-">O-</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="reg-phone">Phone Number</label>
+                <input type="tel" id="reg-phone" class="form-control" placeholder="+1-555-0100">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="reg-contact">Emergency Contact (Phone / Name)</label>
+              <input type="text" id="reg-contact" class="form-control" placeholder="+1-555-911-HELP (Family / Doctor)">
+            </div>
+
+            <button type="submit" id="btn-register-submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
+              <i class="fa-solid fa-user-plus"></i> Create Account
+            </button>
+          </form>
+
+          <div class="auth-footer">
+            <p>Already have an account? <a href="#login">Sign In</a></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 4. EMERGENCY RECOMMENDATION VIEW ==================== -->
+    <section id="view-emergency" class="app-view">
+      <div class="emergency-layout">
+        
+        <!-- Left: Input Control Panel -->
+        <div class="control-panel-card">
+          <h2 class="panel-title">
+            <i class="fa-solid fa-location-crosshairs text-primary"></i> Emergency Location
+          </h2>
+
+          <form id="emergency-form">
+            <!-- Coordinates -->
+            <div class="form-group">
+              <label>Current Location Coordinates</label>
+              <div class="gps-row">
+                <input type="number" step="any" id="origin-lat" class="form-control" placeholder="Latitude" required value="22.729189">
+                <input type="number" step="any" id="origin-lon" class="form-control" placeholder="Longitude" required value="88.496305">
+                <button type="button" id="btn-get-gps" class="btn-gps" title="Locate via GPS">
+                  <i class="fa-solid fa-crosshairs"></i> GPS
+                </button>
+              </div>
+              <div id="gps-status" class="gps-status">
+                <span class="text-muted"><i class="fa-solid fa-location-dot"></i> Demo Center: (22.729189, 88.496305)</span>
+              </div>
+            </div>
+
+            <!-- Radius -->
+            <div class="form-group">
+              <label for="radius-slider">
+                Search Radius: <strong id="radius-value" class="text-primary">5.0 km</strong>
+              </label>
+              <div class="slider-container">
+                <input type="range" id="radius-slider" min="1000" max="15000" step="500" value="5000">
+              </div>
+            </div>
+
+            <!-- Max hospitals -->
+            <div class="form-group">
+              <label for="max-hospitals">Hospitals to Evaluate</label>
+              <select id="max-hospitals" class="form-control">
+                <option value="3">Top 3 Candidates</option>
+                <option value="5" selected>Top 5 Candidates</option>
+                <option value="8">Top 8 Candidates</option>
+              </select>
+            </div>
+
+            <!-- Optional Road Image Vision AI -->
+            <div class="form-group">
+              <label>Road Surface Image (Optional Vision AI)</label>
+              <div class="image-source-tabs">
+                <button type="button" id="tab-img-url" class="tab-btn active">Image URL</button>
+                <button type="button" id="tab-img-upload" class="tab-btn">Upload File</button>
+              </div>
+
+              <div id="group-img-url">
+                <input type="url" id="road-image-url" class="form-control" placeholder="https://example.com/road-photo.jpg">
+              </div>
+
+              <div id="group-img-upload" style="display: none;">
+                <input type="file" id="road-image-file" class="form-control" accept="image/*">
+                <div id="road-image-preview" class="preview-box" style="display: none;"></div>
+              </div>
+            </div>
+
+            <button type="submit" id="btn-submit-emergency" class="btn btn-primary" style="width: 100%;">
+              <i class="fa-solid fa-bolt"></i> Find Fastest Emergency Hospital
+            </button>
+          </form>
+        </div>
+
+        <!-- Right: Interactive Leaflet Map -->
+        <div class="map-wrapper">
+          <div id="emergency-map"></div>
+        </div>
+      </div>
+
+      <!-- Loading State Card -->
+      <div id="emergency-loading" class="top-hero-card" style="display: none; margin-top: 1.5rem; text-align: center;">
+        <i class="fa-solid fa-spinner fa-spin fa-2x text-primary" style="margin-bottom: 1rem;"></i>
+        <h3 id="loading-step-text">Evaluating Traffic, Weather Hazards & AI Road Scores...</h3>
+        <p class="text-muted">Querying Google Routes and Places API in parallel...</p>
+      </div>
+
+      <!-- Results Container -->
+      <div id="emergency-results" class="results-container" style="display: none;">
+        <!-- Top Pick Hero Component -->
+        <div id="top-hospital-hero" class="top-hero-card"></div>
+
+        <!-- Other Ranked Hospitals -->
+        <h3 style="margin-bottom: 1rem;"><i class="fa-solid fa-list-ol"></i> Alternative Hospital Options Ranked</h3>
+        <div id="ranked-hospitals-list" class="ranked-grid"></div>
+      </div>
+    </section>
+
+    <!-- ==================== 5. HOSPITAL DETAILS VIEW ==================== -->
+    <section id="view-hospital-detail" class="app-view">
+      <div id="hospital-detail-content"></div>
+    </section>
+
+    <!-- ==================== 6. USER DASHBOARD VIEW ==================== -->
+    <section id="view-dashboard" class="app-view">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <div>
+          <h2>Welcome, <span id="dash-welcome-name" class="text-primary">User</span></h2>
+          <p class="text-muted">Quick access to emergency routing, medical profile, and search history.</p>
+        </div>
+        <a href="#emergency" class="btn btn-primary">
+          <i class="fa-solid fa-truck-medical"></i> New Emergency Search
+        </a>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-metric-card">
+          <div class="stat-label">Blood Group</div>
+          <div id="dash-blood-group" class="stat-val">--</div>
+        </div>
+
+        <div class="stat-metric-card">
+          <div class="stat-label">Emergency Contact</div>
+          <div id="dash-emergency-contact" class="stat-val" style="font-size: 1.25rem;">--</div>
+        </div>
+
+        <div class="stat-metric-card">
+          <div class="stat-label">Local Weather</div>
+          <div id="dash-weather-widget">Loading...</div>
+        </div>
+      </div>
+
+      <div class="detail-card" style="margin-top: 1.5rem;">
+        <h3><i class="fa-solid fa-clock-rotate-left"></i> Recent Emergency Searches</h3>
+        <div id="dash-recent-searches">Loading recent searches...</div>
+      </div>
+    </section>
+
+    <!-- ==================== 7. USER PROFILE VIEW ==================== -->
+    <section id="view-profile" class="app-view">
+      <div class="detail-hero-header">
+        <div>
+          <h2>My Medical Profile</h2>
+          <p class="text-muted">Manage your personal information and emergency medical details.</p>
+        </div>
+        <div>
+          <span id="prof-role" class="role-badge user">USER</span>
+        </div>
+      </div>
+
+      <div class="detail-grid">
+        <div class="detail-card">
+          <h3><i class="fa-solid fa-user-pen"></i> Personal & Medical Details</h3>
+          <form id="profile-form">
+            <div class="form-group">
+              <label for="prof-email">Email (Immutable)</label>
+              <input type="email" id="prof-email" class="form-control" disabled>
+            </div>
+
+            <div class="form-group">
+              <label for="prof-name">Full Name</label>
+              <input type="text" id="prof-name" class="form-control" required>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="prof-blood">Blood Group</label>
+                <select id="prof-blood" class="form-control">
+                  <option value="">Select...</option>
+                  <option value="A+">A+</option>
+                  <option value="A-">A-</option>
+                  <option value="B+">B+</option>
+                  <option value="B-">B-</option>
+                  <option value="AB+">AB+</option>
+                  <option value="AB-">AB-</option>
+                  <option value="O+">O+</option>
+                  <option value="O-">O-</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="prof-phone">Phone Number</label>
+                <input type="tel" id="prof-phone" class="form-control">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="prof-contact">Emergency Contact (Name / Phone)</label>
+              <input type="text" id="prof-contact" class="form-control">
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="margin-top: 0.5rem;">
+              <i class="fa-solid fa-floppy-disk"></i> Save Profile Changes
+            </button>
+          </form>
+        </div>
+
+        <div class="detail-card">
+          <h3><i class="fa-solid fa-lock"></i> Security & Password</h3>
+          <form id="password-form">
+            <div class="form-group">
+              <label for="pass-current">Current Password</label>
+              <input type="password" id="pass-current" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+              <label for="pass-new">New Password</label>
+              <input type="password" id="pass-new" class="form-control" minlength="6" required>
+            </div>
+
+            <button type="submit" class="btn btn-secondary" style="margin-top: 0.5rem;">
+              <i class="fa-solid fa-key"></i> Update Password
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 8. RECOMMENDATION HISTORY VIEW ==================== -->
+    <section id="view-history" class="app-view">
+      <div class="detail-hero-header">
+        <div>
+          <h2>Recommendation Search History</h2>
+          <p class="text-muted">View past emergency hospital queries, evaluated scores, and inspected routes.</p>
+        </div>
+        <a href="#emergency" class="btn btn-primary btn-sm">
+          <i class="fa-solid fa-plus"></i> New Query
+        </a>
+      </div>
+
+      <div class="table-responsive">
+        <table class="app-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Date & Time</th>
+              <th>Recommended Hospital</th>
+              <th>Travel ETA</th>
+              <th>Composite Score</th>
+              <th>Weather</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="history-table-body">
+            <!-- Dynamic History Rows -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ==================== 9. ADMIN DASHBOARD VIEW ==================== -->
+    <section id="view-admin" class="app-view">
+      <div class="detail-hero-header">
+        <div>
+          <span class="badge-emerald"><i class="fa-solid fa-shield-halved"></i> ADMIN CONTROL CONSOLE</span>
+          <h2>System Health & User Management</h2>
+          <p class="text-muted">Monitor application queries, user accounts, and AI routing performance.</p>
+        </div>
+      </div>
+
+      <!-- Admin Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-metric-card">
+          <div class="stat-label">Total Users</div>
+          <div id="stat-total-users" class="stat-val">--</div>
+        </div>
+
+        <div class="stat-metric-card">
+          <div class="stat-label">System Admins</div>
+          <div id="stat-total-admins" class="stat-val">--</div>
+        </div>
+
+        <div class="stat-metric-card">
+          <div class="stat-label">Emergency Queries</div>
+          <div id="stat-total-queries" class="stat-val">--</div>
+        </div>
+
+        <div class="stat-metric-card">
+          <div class="stat-label">Avg Quality Score</div>
+          <div id="stat-avg-score" class="stat-val">--</div>
+        </div>
+      </div>
+
+      <!-- Users Management Table -->
+      <div class="detail-card" style="margin-bottom: 2rem;">
+        <h3><i class="fa-solid fa-users-gear"></i> System User Accounts & Role Control</h3>
+        <div class="table-responsive">
+          <table class="app-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Registered</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="admin-users-table">
+              <!-- Dynamic Users -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Live Emergency Queries Stream -->
+      <div class="detail-card">
+        <h3><i class="fa-solid fa-tower-broadcast"></i> System Emergency Query Activity Logs</h3>
+        <div class="table-responsive">
+          <table class="app-table">
+            <thead>
+              <tr>
+                <th>Log ID</th>
+                <th>Time</th>
+                <th>User Account</th>
+                <th>Origin Coordinates</th>
+                <th>Hospital Selected</th>
+                <th>Score</th>
+                <th>Evaluated</th>
+              </tr>
+            </thead>
+            <tbody id="admin-logs-table">
+              <!-- Dynamic Logs -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 10. ERROR VIEWS (401, 403, 404, 500) ==================== -->
+    
+    <!-- 401 Unauthorized -->
+    <section id="view-error-401" class="app-view">
+      <div class="error-screen-container">
+        <div class="error-code-badge">401</div>
+        <h2>Session Expired or Unauthorized</h2>
+        <p>You must be signed in with a valid JWT session to access this resource.</p>
+        <a href="#login" class="btn btn-primary"><i class="fa-solid fa-right-to-bracket"></i> Sign In to Account</a>
+      </div>
+    </section>
+
+    <!-- 403 Forbidden -->
+    <section id="view-error-403" class="app-view">
+      <div class="error-screen-container">
+        <div class="error-code-badge" style="color: var(--status-warning);">403</div>
+        <h2>Access Forbidden</h2>
+        <p>You do not have the required administrator privileges to view this management console.</p>
+        <a href="#dashboard" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Return to Dashboard</a>
+      </div>
+    </section>
+
+    <!-- 404 Not Found -->
+    <section id="view-error-404" class="app-view">
+      <div class="error-screen-container">
+        <div class="error-code-badge" style="color: var(--brand-cyan);">404</div>
+        <h2>Page Not Found</h2>
+        <p>The page or route you are attempting to access does not exist.</p>
+        <a href="#landing" class="btn btn-primary"><i class="fa-solid fa-house"></i> Return to Home</a>
+      </div>
+    </section>
+
+    <!-- 500 Server Error -->
+    <section id="view-error-500" class="app-view">
+      <div class="error-screen-container">
+        <div class="error-code-badge" style="color: var(--status-danger);">500</div>
+        <h2>Internal Server Error</h2>
+        <p>An unexpected upstream error occurred. Please verify backend service connectivity.</p>
+        <a href="#emergency" class="btn btn-primary"><i class="fa-solid fa-rotate-right"></i> Try Again</a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Toast Notification Pop-up -->
+  <div id="app-toast" class="toast-popup">
+    <i id="toast-icon" class="fa-solid fa-circle-info"></i>
+    <span id="toast-message">Notification message</span>
+  </div>
+
+  <!-- Leaflet.js Script -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  
+  <!-- PulseRoute Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/router.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,1 +1,6 @@
+__pycache__/
+*.pyc
+
 venv/
+test/
+verify_api.py
