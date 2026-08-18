@@ -99,7 +99,7 @@ class RoadModelService:
 
     def analyze_image(self, image: Image.Image) -> Dict[str, Any]:
         """Analyze a PIL Image using CLIP zero-shot classification against road labels."""
-        self.model = self.load_model()
+        self.load_model()
         if not self.is_loaded or not (self.model and self.processor):
             raise ImageProcessingError(
                 message="CLIP vision model is not loaded. Please ensure the app has fully started."

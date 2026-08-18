@@ -1,5 +1,8 @@
 import os
+from dotenv import load_dotenv
 from pydantic import BaseModel
+
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), ".env"))
 
 class Settings(BaseModel):
     PROJECT_NAME: str = "Hospital Route Finding API"
@@ -11,8 +14,13 @@ class Settings(BaseModel):
     API_V1_PREFIX: str = "/api/v1"
 
     # API Keys (defaults from existing services, can be overridden with env variables)
-    GOOGLE_MAPS_API_KEY: str = os.getenv("GOOGLE_MAPS_API_KEY", "AIzaSyCWu_AOIPvSm6DjvmpuIJTwNdQROPO-DrA")
-    OPENWEATHER_API_KEY: str = os.getenv("OPENWEATHER_API_KEY", "d0cc7592f738b79121a8dd0c4c53317b")
+    GOOGLE_MAPS_API_KEY: str = os.getenv("GOOGLE_MAPS_API_KEY")
+    OPENWEATHER_API_KEY: str = os.getenv("OPENWEATHER_API_KEY")
+        
+    # Authentication
+    JWT_SECRET_KEY: str = os.getenv("JWT_SECRET_KEY")
+    JWT_ALGORITHM: str = "HS256"
+    JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 24 hours
 
     # Defaults
     DEFAULT_HOSPITAL_RADIUS_METERS: float = 5000.0

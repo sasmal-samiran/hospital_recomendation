@@ -51,15 +51,12 @@ def create_app() -> FastAPI:
     app.include_router(history_router, prefix=api_prefix)
     app.include_router(admin_router, prefix=api_prefix)
 
-    @app.on_event("startup")
-    async def startup_event():
-        """Warm up CLIP model on application startup for fast inference."""
-        logger.info("Warming up CLIP vision model...")
-        try:
-            road_model_service.load_model()
-            logger.info("✓ CLIP model ready for inference")
-        except Exception as e:
-            logger.warning(f"⚠ Model preload failed (lazy-load fallback available): {e}")
+    # @app.on_event("startup")
+    # async def startup_event():
+    #     """Preload CLIP vision model in a background thread without blocking server boot."""
+    #     import threading
+    #     logger.info("Server started. Preloading CLIP vision model in background...")
+    #     threading.Thread(target=road_model_service.load_model, daemon=True).start()
 
     @app.get("/", tags=["General"], summary="API Root / Overview")
     def root():

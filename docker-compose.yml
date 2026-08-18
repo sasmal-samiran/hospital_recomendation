@@ -1,0 +1,70 @@
+services:
+  # ============================================================================
+  # 1. Backend Service (FastAPI)
+  # ============================================================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: pulseroute_backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - SQLITE_DB_PATH=/app/data/app.db
+      - GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY:-AIzaSyCWu_AOIPvSm6DjvmpuIJTwNdQROPO-DrA}
+      - OPENWEATHER_API_KEY=${OPENWEATHER_API_KEY:-d0cc7592f738b79121a8dd0c4c53317b}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-hospital-emergency-super-secret-key-2026-secure-jwt}
+    volumes:
+      # Live development bind mount (Python code changes auto-reload)
+      - ./backend:/app
+      # Persistent database volume
+      - sqlite_data:/app/data
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    networks:
+      pulseroute_net:
+        aliases:
+          - backend
+
+  # ============================================================================
+  # 2. Frontend Service (Nginx Web Server + Reverse Proxy)
+  # ============================================================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: pulseroute_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      # Live development bind mount (HTML, CSS, JS changes reflect instantly)
+      - ./frontend:/usr/share/nginx/html:ro
+      - ./frontend/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    networks:
+      pulseroute_net:
+        aliases:
+          - frontend
+
+volumes:
+  sqlite_data:
+    driver: local
+
+networks:
+  pulseroute_net:
+    driver: bridge

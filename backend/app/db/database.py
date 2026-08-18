@@ -7,11 +7,12 @@ import os
 
 logger = logging.getLogger(__name__)
 
-DB_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "app.db")
+DB_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data/app.db")
 
 class Database:
     def __init__(self, db_path: str = DB_FILE):
         self.db_path = db_path
+        os.makedirs(os.path.dirname(os.path.abspath(self.db_path)), exist_ok=True)
         self._init_db()
 
     def _get_connection(self) -> sqlite3.Connection:

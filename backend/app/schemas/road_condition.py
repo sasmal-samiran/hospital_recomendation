@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 from pydantic import BaseModel, Field
 
 class RoadConditionUrlRequest(BaseModel):
@@ -14,7 +14,7 @@ class RoadConditionResponse(BaseModel):
     road_score: int = Field(..., description="Road condition score from 0 to 100", examples=[98])
     confidence_percent: float = Field(..., description="Model classification confidence percentage", examples=[94.5])
     category: str = Field(..., description="Category (Excellent, Good, Moderate, Poor, Dangerous)")
-    top_candidates: Optional[List[Dict[str, float]]] = Field(None, description="Top predicted conditions with probabilities")
+    top_candidates: Optional[List[Dict[str, Any]]] = Field(None, description="Top predicted conditions with probabilities")
 
 class RoadLabelsResponse(BaseModel):
     total_labels: int

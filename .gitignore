@@ -1,6 +1,26 @@
+# Bytecode & Caches
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
 
+# Environments
+.env
+.env.local
+.env.*.local
 venv/
-test/
-verify_api.py
+.venv/
+env/
+
+# Database & runtime data
+*.db
+*.sqlite
+*.sqlite3
+data/
+
+# OS and temporary files
+.DS_Store
+Thumbs.db
+*.log
